@@ -73,11 +73,10 @@ class RBFN:
             loss = 0
             eta = (epoch - e) / epoch * 0.1
             for data in self.data:
-                output = 0
+                output = bias
                 for neuron in self.neurons:
                     neuron.basis_function(data[:self.d])
                     output += neuron.weight * neuron.y
-                output += bias
                 bias += eta * (data[self.d] - output)
                 loss += (data[self.d] - output) ** 2 / 2
                 for neuron in self.neurons:
@@ -106,14 +105,13 @@ class RBFN:
         self.run.append([car.copy(), phi, distances(car, phi)])
         while car[1] < 34:
             dists = distances(car, phi)
-            output = 0
+            output = bias
             for neuron in self.neurons:
                 if self.d == 3:
                     neuron.basis_function(dists[:, 2])
                 else:
                     neuron.basis_function(np.append(car, dists[:, 2]))
                 output += neuron.weight * neuron.y
-            output += bias
             output *= -1
             rec = f'{car[0]} {car[1]} ' if self.d == 5 else ''
             rec += f'{dists[:, 2][0]} {dists[:, 2][1]} {dists[:, 2][2]} {output}\n'
